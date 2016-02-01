@@ -9,20 +9,13 @@
     <name>BioboxMesos</name>
         
     <properties>
-        <!-- github server corresponds to entry in ~/.m2/settings.xml -->
         <github.global.server>github</github.global.server>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <build>
-        <resources>
-            <resource>
-                <filtering>false</filtering>
-                <directory>/usr/local/lib</directory>
-                <includes>
-                    <include>libmesos.so</include>
-                </includes>
-            </resource>
-        </resources>
+        
         <plugins>
 
             <plugin>

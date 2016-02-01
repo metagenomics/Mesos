@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.bioboxes.bioboxmesossheduler.tasks;
+package de.cebitec.mesos.tasks;
 
 import java.util.Arrays;
 import java.util.Date;

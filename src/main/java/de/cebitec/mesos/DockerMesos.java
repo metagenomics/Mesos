@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.bioboxes.bioboxmesossheduler;
+package de.cebitec.mesos;
 
 import com.google.protobuf.ByteString;
 import java.io.IOException;
@@ -22,10 +22,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
+
+import de.cebitec.mesos.sheduler.MesosScheduler;
 import org.apache.mesos.*;
 import org.apache.mesos.Protos.*;
-import org.bioboxes.bioboxmesossheduler.sheduler.MesosScheduler;
-import org.bioboxes.bioboxmesossheduler.tools.LibMesosFinder;
+import de.cebitec.mesos.tools.LibMesosFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

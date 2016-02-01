@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.bioboxes.bioboxmesossheduler.tools;
+package de.cebitec.mesos.tools;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
