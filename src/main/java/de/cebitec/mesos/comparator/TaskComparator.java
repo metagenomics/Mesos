@@ -6,16 +6,16 @@
 package de.cebitec.mesos.comparator;
 
 import java.util.Comparator;
-import de.cebitec.mesos.tasks.DockerTask;
+import de.cebitec.mesos.tasks.Task;
 
 /**
  *
  * @author jsteiner
  */
-public class DockerTaskComparator implements Comparator<DockerTask> {
+public class TaskComparator implements Comparator<Task> {
 
     @Override
-    public int compare(DockerTask t, DockerTask t1) {
+    public int compare(Task t, Task t1) {
         if (t.getPriority() < t1.getPriority()) {
             return 1;
         } else if (t.getPriority() > t1.getPriority()) {
@@ -24,5 +24,4 @@ public class DockerTaskComparator implements Comparator<DockerTask> {
             return 0;
         }
     }
-
 }

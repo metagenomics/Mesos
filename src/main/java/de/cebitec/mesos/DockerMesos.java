@@ -23,7 +23,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
 
-import de.cebitec.mesos.sheduler.MesosScheduler;
+import de.cebitec.mesos.scheduler.SimpleMesosScheduler;
+import de.cebitec.mesos.tasks.DockerTask;
+import de.cebitec.mesos.tasks.Task;
 import org.apache.mesos.*;
 import org.apache.mesos.Protos.*;
 import de.cebitec.mesos.tools.LibMesosFinder;
@@ -40,7 +42,7 @@ public class DockerMesos {
     
     private static final Logger logger = LoggerFactory.getLogger(DockerMesos.class);
     private final MesosSchedulerDriver driver;
-    private final MesosScheduler scheduler;
+    private final SimpleMesosScheduler scheduler;
 
     /**
      * Command-line entry point.
@@ -65,7 +67,9 @@ public class DockerMesos {
             }
         });
         t.start();
-        ef.getScheduler().addTask(args[1], 1, 256, "jsteiner", null, null);
+        Task task = new DockerTask();
+        task.createTask(1,args[1], 1, 256, "jsteiner", null, null);
+        ef.getScheduler().addTask(task);
 
 //        System.exit(0);
     }
@@ -104,7 +108,7 @@ public class DockerMesos {
                 .setFailoverTimeout(frameworkFailoverTimeout)
                 .build(); // timeout in seconds
 
-        scheduler = new MesosScheduler();
+        scheduler = new SimpleMesosScheduler();
         
         if (mesosFrameworkCredentials == null) {
             driver = new MesosSchedulerDriver(scheduler, mesosFramework, masterIP);
@@ -118,7 +122,7 @@ public class DockerMesos {
         driver.run();
     }
     
-    public MesosScheduler getScheduler() {
+    public SimpleMesosScheduler getScheduler() {
         return this.scheduler;
     }
     

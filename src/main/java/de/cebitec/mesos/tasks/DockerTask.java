@@ -37,12 +37,12 @@ public class DockerTask implements Task {
     /**
      * The needed amount of CPU resources.
      */
-    private int needed_CPU;
+    private int neededCPU;
 
     /**
      * The needed amount of Memory resources.
      */
-    private double needed_MEM;
+    private double neededMEM;
 
     /**
      * The actual task state.
@@ -69,6 +69,7 @@ public class DockerTask implements Task {
      * Number of times this task has failed.
      */
     private int executionErrors = 0;
+
 
     public DockerTask() {
 
@@ -135,16 +136,17 @@ public class DockerTask implements Task {
 
         taskContent = Protos.TaskInfo.newBuilder(task).mergeCommand(Protos.CommandInfo.newBuilder().addAllArguments(Arrays.asList(arg)).setShell(false).build()).buildPartial();
         
-        this.needed_CPU = (int) getResource("cpus", taskContent.getResourcesList());
-        this.needed_MEM = (int) getResource("mem", taskContent.getResourcesList());
+        this.neededCPU = (int) getResource("cpus", taskContent.getResourcesList());
+        this.neededMEM = (int) getResource("mem", taskContent.getResourcesList());
         
         return this;
     }
 
+
     @Override
     public DockerTask calculatePriority(int numberOfSlaves, Protos.Offer currentSlave) {
-        priority = (numberOfSlaves / ((getResource("cpus", currentSlave.getResourcesList()) / this.needed_CPU)
-                + (getResource("mem", currentSlave.getResourcesList()) / this.needed_MEM))) + this.waitingTickets;
+        priority = (numberOfSlaves / ((getResource("cpus", currentSlave.getResourcesList()) / this.neededCPU)
+                + (getResource("mem", currentSlave.getResourcesList()) / this.neededMEM))) + this.waitingTickets;
         return this;
     }
 
@@ -171,19 +173,17 @@ public class DockerTask implements Task {
         return this;
     }
 
-    // #############################################
-    // G and S's
-    // #############################################
+    @Override
     public TaskInfo getTaskContent() {
         return taskContent;
     }
 
-    public int getNeeded_CPU() {
-        return needed_CPU;
+    public int getNeededCPU() {
+        return neededCPU;
     }
 
-    public double getNeeded_MEM() {
-        return needed_MEM;
+    public double getNeededMEM() {
+        return neededMEM;
     }
 
     public Protos.TaskState getStatus() {

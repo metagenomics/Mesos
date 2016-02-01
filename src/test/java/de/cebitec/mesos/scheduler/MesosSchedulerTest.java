@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.cebitec.mesos.sheduler;
+package de.cebitec.mesos.scheduler;
 
+import de.cebitec.mesos.tasks.DockerTask;
+import de.cebitec.mesos.tasks.Task;
 import org.apache.mesos.MesosSchedulerDriver;
 import org.apache.mesos.Protos;
 import org.apache.mesos.SchedulerDriver;
@@ -47,13 +49,21 @@ public class MesosSchedulerTest {
     public void testResourceOffers() {
         System.out.println("resourceOffers");
 
-        MesosScheduler instance = new MesosScheduler();
+        SimpleMesosScheduler instance = new SimpleMesosScheduler();
 
         // ############## Image,mem,cpu,   user   , mounts,mounts
-        instance.addTask("test", 2, 2, "jsteiner1", null, null);
-        instance.addTask("test", 1, 1, "jsteiner2", null, null);
-        instance.addTask("test", 3, 2, "jsteiner3", null, null);
-        instance.addTask("test", 1, 4, "jsteiner4", null, null);
+        Task task1 = new DockerTask();
+        Task task2 = new DockerTask();
+        Task task3 = new DockerTask();
+        Task task4 = new DockerTask();
+        task1.createTask(1, "test", 2, 2, "jsteiner1", null, null);
+        task2.createTask(2, "test", 1, 1, "jsteiner2", null, null);
+        task3.createTask(3, "test", 3, 2, "jsteiner3", null, null);
+        task4.createTask(4, "test", 1, 4, "jsteiner4", null, null);
+        instance.addTask(task1);
+        instance.addTask(task2);
+        instance.addTask(task3);
+        instance.addTask(task4);
 
         List<Protos.Offer> offers = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
