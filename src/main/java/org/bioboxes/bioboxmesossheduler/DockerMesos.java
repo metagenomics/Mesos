@@ -52,7 +52,7 @@ public class DockerMesos {
     public static void main(String[] args) throws Exception {
         Credential credential = Credential.newBuilder()
                 .setPrincipal("jojo")
-                .setSecret(ByteString.copyFrom("123".getBytes()))
+                .setSecret(ByteString.copyFrom("123".getBytes()).toString())
                 .build();
         
         final DockerMesos ef = new DockerMesos(args[0], null);
