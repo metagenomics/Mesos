@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.bioboxes.bioboxmesossheduler.sheduler;
+package de.cebitec.mesos.sheduler;
 
 import org.apache.mesos.Protos;
 import org.apache.mesos.Scheduler;
@@ -22,17 +22,13 @@ import org.apache.mesos.SchedulerDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.mesos.Protos.CommandInfo;
+
 import org.apache.mesos.Protos.FrameworkID;
-import org.apache.mesos.Protos.Volume;
-import org.bioboxes.bioboxmesossheduler.comparator.DockerTaskComparator;
-import org.bioboxes.bioboxmesossheduler.tasks.DockerTask;
+import de.cebitec.mesos.comparator.DockerTaskComparator;
+import de.cebitec.mesos.tasks.DockerTask;
 
 /**
  * Example scheduler to launch Docker containers.

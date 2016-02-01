@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.bioboxes.bioboxmesossheduler.sheduler;
+package de.cebitec.mesos.sheduler;
 
 import org.apache.mesos.MesosSchedulerDriver;
 import org.apache.mesos.Protos;

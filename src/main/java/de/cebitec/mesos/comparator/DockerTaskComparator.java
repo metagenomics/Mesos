@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.bioboxes.bioboxmesossheduler.comparator;
+package de.cebitec.mesos.comparator;
 
 import java.util.Comparator;
-import org.bioboxes.bioboxmesossheduler.tasks.DockerTask;
+import de.cebitec.mesos.tasks.DockerTask;
 
 /**
  *
