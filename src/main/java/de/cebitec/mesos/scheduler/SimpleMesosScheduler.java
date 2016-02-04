@@ -112,7 +112,6 @@ public class SimpleMesosScheduler extends AMesosScheduler {
     @Override
     public Protos.TaskInfo addTask(Task task) {
         //TODO ensure Task id is unique);
-        //TODO update doc
         pendingTasks.add(task);
         logger.info("PendingTasks Size {}", pendingTasks.size());
         return task.getTaskContent();

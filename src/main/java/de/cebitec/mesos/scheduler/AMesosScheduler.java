@@ -17,12 +17,9 @@ public abstract class AMesosScheduler implements Scheduler {
 
     private Protos.FrameworkID frameworkID;
 
-    private IFramework framework;
-
     private SchedulerDriver driver;
 
     public AMesosScheduler(IFramework framework){
-        this.framework = framework;
         driver = new MesosSchedulerDriver(this,
                 Protos.FrameworkInfo.newBuilder()
                         .setHostname(framework.getHostname())
@@ -60,8 +57,6 @@ public abstract class AMesosScheduler implements Scheduler {
      */
     public abstract Protos.TaskInfo addTask(Task task);
 
-
-
     @Override
     public void registered(SchedulerDriver schedulerDriver, Protos.FrameworkID frameworkID, Protos.MasterInfo masterInfo) {
         logger.info("registered() master={}:{}, framework={}", masterInfo.getIp(), masterInfo.getPort(), frameworkID);
@@ -72,7 +67,6 @@ public abstract class AMesosScheduler implements Scheduler {
     public void reregistered(SchedulerDriver schedulerDriver, Protos.MasterInfo masterInfo) {
         logger.info("reregistered()");
     }
-
 
     /**
      *
