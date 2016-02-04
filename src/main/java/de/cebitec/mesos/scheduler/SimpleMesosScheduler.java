@@ -17,9 +17,9 @@
 package de.cebitec.mesos.scheduler;
 
 import de.cebitec.mesos.comparator.TaskComparator;
+import de.cebitec.mesos.framework.IFramework;
 import de.cebitec.mesos.tasks.Task;
 import org.apache.mesos.Protos;
-import org.apache.mesos.SchedulerDriver;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,8 +37,12 @@ public class SimpleMesosScheduler extends AMesosScheduler {
     private final List<Task> finishedTasks = new ArrayList<>();
     private final List<Task> failedTasks = new ArrayList<>();
 
+    public SimpleMesosScheduler(IFramework framework) {
+        super(framework);
+    }
+
     @Override
-    public void resourceOffers(SchedulerDriver schedulerDriver, List<Protos.Offer> offers) {
+    protected void handleResources(List<Protos.Offer> offers) {
 
         /**
          * Adding rule to devide resources. Maybe ( numberOfOffers / #containers
@@ -48,7 +52,7 @@ public class SimpleMesosScheduler extends AMesosScheduler {
 
             if (pendingTasks.isEmpty()) {
 
-                schedulerDriver.declineOffer(offer.getId()); // no work
+                declineOffer(offer);
 
             } else {
 
@@ -95,11 +99,11 @@ public class SimpleMesosScheduler extends AMesosScheduler {
                         runningTasks.add(t);
                     }
 
-                    schedulerDriver.launchTasks(offer.getId(), tmp, filters);
+                    launchTask(offer, tmp, filters);
 
                     logger.info("Started Tasks: {} on Slave: ({})", tmp.size(), offer.getId().getValue());
                 } else {
-                    schedulerDriver.declineOffer(offer.getId());
+                    declineOffer(offer);
                 }
             }
         }

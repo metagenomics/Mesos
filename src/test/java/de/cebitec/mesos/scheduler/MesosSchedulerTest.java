@@ -5,6 +5,7 @@
  */
 package de.cebitec.mesos.scheduler;
 
+import de.cebitec.mesos.framework.FrameworkDescriptor;
 import de.cebitec.mesos.tasks.DockerTask;
 import de.cebitec.mesos.tasks.Task;
 import org.apache.mesos.MesosSchedulerDriver;
@@ -23,6 +24,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class MesosSchedulerTest {
 
+    private FrameworkDescriptor descriptor;
+
     public MesosSchedulerTest() {
     }
 
@@ -36,6 +39,12 @@ public class MesosSchedulerTest {
 
     @Before
     public void setUp() {
+        descriptor = new FrameworkDescriptor();
+        descriptor.setFrameworkName("tests");
+        descriptor.setHostname("localhost");
+        descriptor.setUserName("pbelmann");
+        descriptor.setMasterIp("127.0.0.1");
+        descriptor.setMasterPort("5050");
     }
 
     @After
@@ -47,19 +56,17 @@ public class MesosSchedulerTest {
      */
     @Test
     public void testResourceOffers() {
-        System.out.println("resourceOffers");
-
-        SimpleMesosScheduler instance = new SimpleMesosScheduler();
+        SimpleMesosScheduler instance = new SimpleMesosScheduler(descriptor);
 
         // ############## Image,mem,cpu,   user   , mounts,mounts
         Task task1 = new DockerTask();
         Task task2 = new DockerTask();
         Task task3 = new DockerTask();
         Task task4 = new DockerTask();
-        task1.createTask(1, "test", 2, 2, "jsteiner1", null, null);
-        task2.createTask(2, "test", 1, 1, "jsteiner2", null, null);
-        task3.createTask(3, "test", 3, 2, "jsteiner3", null, null);
-        task4.createTask(4, "test", 1, 4, "jsteiner4", null, null);
+        task1.createTask(1, "test", 2, 2, "jsteiner1");
+        task2.createTask(2, "test", 1, 1, "jsteiner2");
+        task3.createTask(3, "test", 3, 2, "jsteiner3");
+        task4.createTask(4, "test", 1, 4, "jsteiner4");
         instance.addTask(task1);
         instance.addTask(task2);
         instance.addTask(task3);
@@ -71,8 +78,7 @@ public class MesosSchedulerTest {
                     .addResources(Protos.Resource.newBuilder()
                             .setName("cpus")
                             .setType(Protos.Value.Type.SCALAR)
-                            .setScalar(Protos.Value.Scalar.newBuilder().setValue(4)))
-                    .addResources(Protos.Resource.newBuilder()
+                            .setScalar(Protos.Value.Scalar.newBuilder().setValue(4))).addResources(Protos.Resource.newBuilder()
                             .setName("mem")
                             .setType(Protos.Value.Type.SCALAR)
                             .setScalar(Protos.Value.Scalar.newBuilder().setValue(4)))
@@ -83,13 +89,7 @@ public class MesosSchedulerTest {
                     .build());
         }
 
-        instance.resourceOffers(new MesosSchedulerDriver(instance,
-                Protos.FrameworkInfo.newBuilder()
-                .setHostname("test")
-                .setName("tests")
-                .setUser("jsteiner")
-                .build(),
-                "127.0.0.1:5050"), offers);
+        instance.manageResourceOffers(offers);
 
         System.out.println("Pending: " + instance.getPendingTasks().size());
         System.out.println("Running: " + instance.getRunningTasks().size());

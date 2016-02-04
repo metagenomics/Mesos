@@ -1,7 +1,6 @@
 package de.cebitec.mesos.tasks;
 
-import java.util.Date;
-import java.util.List;
+import de.cebitec.mesos.volumes.Volumes;
 import org.apache.mesos.Protos;
 
 /**
@@ -16,8 +15,14 @@ public interface Task<T extends Task> {
                         int maxCPU,
                         int maxMEM,
                         String principal,
-                        List<String> hostVolumes,
-                        List<String> containerVolumes,
+                        Volumes volumes,
+                        String... arg);
+
+    public T createTask(int id,
+                        String dockerImage,
+                        int maxCPU,
+                        int maxMEM,
+                        String principal,
                         String... arg);
 
     /**

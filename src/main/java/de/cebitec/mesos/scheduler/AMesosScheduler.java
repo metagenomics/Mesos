@@ -1,20 +1,57 @@
 package de.cebitec.mesos.scheduler;
 
+import de.cebitec.mesos.framework.IFramework;
 import de.cebitec.mesos.tasks.Task;
+import org.apache.mesos.MesosSchedulerDriver;
 import org.apache.mesos.Protos;
 import org.apache.mesos.Scheduler;
 import org.apache.mesos.SchedulerDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public abstract class AMesosScheduler implements Scheduler {
 
-    /**
-     * Logger.
-     */
     protected static final Logger logger = LoggerFactory.getLogger(AMesosScheduler.class);
 
     private Protos.FrameworkID frameworkID;
+
+    private IFramework framework;
+
+    private SchedulerDriver driver;
+
+    public AMesosScheduler(IFramework framework){
+        this.framework = framework;
+        driver = new MesosSchedulerDriver(this,
+                Protos.FrameworkInfo.newBuilder()
+                        .setHostname(framework.getHostname())
+                        .setName(framework.getFrameworkName())
+                        .setUser(framework.getUserName())
+                        .build(),
+                framework.getMasterIp() + ":" + framework.getMasterPort());
+        driver.start();
+    }
+
+    public void manageResourceOffers(List<Protos.Offer> offers){
+        resourceOffers(driver, offers);
+    }
+
+    @Override
+    public void resourceOffers(SchedulerDriver schedulerDriver, List<Protos.Offer> list) {
+        this.driver = schedulerDriver;
+        handleResources(list);
+    }
+
+    protected abstract void handleResources(List<Protos.Offer> list);
+
+    protected void declineOffer(Protos.Offer offer){
+        driver.declineOffer(offer.getId());
+    }
+
+    protected void launchTask(Protos.Offer offer, List<Protos.TaskInfo> infos, Protos.Filters filters){
+        driver.launchTasks(offer.getId(),infos, filters);
+    }
 
     /**
      * Add Task
@@ -22,6 +59,8 @@ public abstract class AMesosScheduler implements Scheduler {
      * @return
      */
     public abstract Protos.TaskInfo addTask(Task task);
+
+
 
     @Override
     public void registered(SchedulerDriver schedulerDriver, Protos.FrameworkID frameworkID, Protos.MasterInfo masterInfo) {

@@ -5,16 +5,18 @@
  */
 package de.cebitec.mesos.tasks;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import de.cebitec.mesos.volumes.IVolume;
+import de.cebitec.mesos.volumes.Volumes;
 import org.apache.mesos.Protos;
 import org.apache.mesos.Protos.TaskInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 /**
- *
  * @author jsteiner
  */
 public class DockerTask implements Task {
@@ -28,7 +30,7 @@ public class DockerTask implements Task {
      * Starttime.
      */
     private Date startTime;
-    
+
     /**
      * The overlying ProtosTask Content to execute.
      */
@@ -70,22 +72,8 @@ public class DockerTask implements Task {
      */
     private int executionErrors = 0;
 
-
-    public DockerTask() {
-
-    }
-
     @Override
-    public DockerTask createTask(
-            int id,
-            String dockerImage,
-            int maxCPU,
-            int maxMEM,
-            String principal,
-            List hostVolumes,
-            List containerVolumes,
-            String... arg) {
-
+    public Task createTask(int id, String dockerImage, int maxCPU, int maxMEM, String principal, Volumes volumes, String... arg) {
         Protos.TaskID taskId = Protos.TaskID.newBuilder()
                 .setValue(principal + "_" + Integer.toString(id)).build();
 
@@ -102,19 +90,8 @@ public class DockerTask implements Task {
         containerInfoBuilder.setType(Protos.ContainerInfo.Type.DOCKER);
         containerInfoBuilder.setDocker(dockerInfoBuilder.build());
         // Mount volumes if needed
-        if (hostVolumes != null && containerVolumes != null) {
-            int nHostVolumes = hostVolumes.size();
-            if (nHostVolumes != containerVolumes.size()) {
-                logger.error("Volume declarations of host and container differ in length ...");
-            }
-
-            for (int i = 0; i < nHostVolumes; i++) {
-                containerInfoBuilder.addVolumes(Protos.Volume.newBuilder()
-                        .setContainerPath(containerVolumes.get(i).toString())
-                        .setHostPath(hostVolumes.get(i).toString())
-                        .setMode(Protos.Volume.Mode.RW)
-                        .build());
-            }
+        for (IVolume volume : volumes.getVolumes()) {
+            containerInfoBuilder.addVolumes(volume.getProtosVolume());
         }
         /**
          * Task Builder.
@@ -135,13 +112,18 @@ public class DockerTask implements Task {
                 .buildPartial(); // partialBuild, because we'll add the slaveID later
 
         taskContent = Protos.TaskInfo.newBuilder(task).mergeCommand(Protos.CommandInfo.newBuilder().addAllArguments(Arrays.asList(arg)).setShell(false).build()).buildPartial();
-        
+
         this.neededCPU = (int) getResource("cpus", taskContent.getResourcesList());
         this.neededMEM = (int) getResource("mem", taskContent.getResourcesList());
-        
+
         return this;
+
     }
 
+    @Override
+    public Task createTask(int id, String dockerImage, int maxCPU, int maxMEM, String principal, String... arg) {
+        return this.createTask(id, dockerImage, maxCPU, maxMEM, principal, new Volumes(), arg);
+    }
 
     @Override
     public DockerTask calculatePriority(int numberOfSlaves, Protos.Offer currentSlave) {
@@ -151,8 +133,7 @@ public class DockerTask implements Task {
     }
 
     /**
-     *
-     * @param type - 'mem' , 'cpus'
+     * @param type      - 'mem' , 'cpus'
      * @param resources
      * @return -1 if error double if default
      */
@@ -218,9 +199,9 @@ public class DockerTask implements Task {
         long diff = new Date().getTime() - startTime.getTime();
         return diff / 1000 % 60;
     }
+
     public long getRuntimeMinutes() {
         long diff = new Date().getTime() - startTime.getTime();
         return diff / (60 * 1000) % 60;
     }
-    
 }
