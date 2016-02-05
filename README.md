@@ -1,3 +1,5 @@
+[![Release](https://jitpack.io/v/metagenomics/Mesos.svg)](https://jitpack.io/#metagenomics/Mesos)
+
 ## Mesos Scheduler
 
 ### Install
