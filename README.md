@@ -25,3 +25,6 @@
   mvn clean compile test
   ~~~
 
+###### Optional: Test Configuration
+
+You can configure the test in [this](src/test/resources/mesosConf.properties) property file.

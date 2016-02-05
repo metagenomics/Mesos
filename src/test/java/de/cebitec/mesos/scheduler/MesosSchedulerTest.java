@@ -12,6 +12,7 @@ import org.apache.mesos.MesosSchedulerDriver;
 import org.apache.mesos.Protos;
 import org.apache.mesos.SchedulerDriver;
 import org.junit.*;
+import util.PropertyStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +25,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class MesosSchedulerTest {
 
+    private final PropertyStore store;
     private FrameworkDescriptor descriptor;
 
     public MesosSchedulerTest() {
+        store = new PropertyStore();
     }
 
     @BeforeClass
@@ -40,11 +43,11 @@ public class MesosSchedulerTest {
     @Before
     public void setUp() {
         descriptor = new FrameworkDescriptor();
-        descriptor.setFrameworkName("tests");
-        descriptor.setHostname("localhost");
-        descriptor.setUserName("pbelmann");
-        descriptor.setMasterIp("127.0.0.1");
-        descriptor.setMasterPort("5050");
+        descriptor.setFrameworkName(store.getProperty("framework.name"));
+        descriptor.setHostname(store.getProperty("master.hostname"));
+        descriptor.setUserName(store.getProperty("master.user"));
+        descriptor.setMasterIp(store.getProperty("master.ip"));
+        descriptor.setMasterPort(store.getProperty("master.port"));
     }
 
     @After
