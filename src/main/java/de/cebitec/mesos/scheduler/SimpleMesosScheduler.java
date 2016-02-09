@@ -5,9 +5,9 @@
  * licenses this file to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -31,14 +31,21 @@ import java.util.List;
 public class SimpleMesosScheduler extends AMesosScheduler {
 
 
-    private final List<Task> pendingTasks = new ArrayList<>();
-    private final List<Task> stagingTasks = new ArrayList<>();
-    private final List<Task> runningTasks = new ArrayList<>();
-    private final List<Task> finishedTasks = new ArrayList<>();
-    private final List<Task> failedTasks = new ArrayList<>();
+    private List<Task> pendingTasks;
+    private List<Task> stagingTasks;
+    private List<Task> runningTasks;
+    private List<Task> finishedTasks;
+    private List<Task> failedTasks;
+    private List<Task> allTasks;
 
     public SimpleMesosScheduler(IFramework framework) {
         super(framework);
+        pendingTasks = new ArrayList<>();
+        stagingTasks = new ArrayList<>();
+        runningTasks = new ArrayList<>();
+        finishedTasks = new ArrayList<>();
+        failedTasks = new ArrayList<>();
+        allTasks = new ArrayList<>();
     }
 
     @Override
@@ -52,6 +59,7 @@ public class SimpleMesosScheduler extends AMesosScheduler {
 
             if (pendingTasks.isEmpty()) {
 
+                stagingTasks.clear();
                 declineOffer(offer);
 
             } else {
@@ -98,7 +106,6 @@ public class SimpleMesosScheduler extends AMesosScheduler {
                         tmp.add(t.getTaskContent());
                         runningTasks.add(t);
                     }
-
                     launchTask(offer, tmp, filters);
 
                     logger.info("Started Tasks: {} on Slave: ({})", tmp.size(), offer.getId().getValue());
@@ -111,7 +118,7 @@ public class SimpleMesosScheduler extends AMesosScheduler {
 
     @Override
     public Protos.TaskInfo addTask(Task task) {
-        //TODO ensure Task id is unique);
+        allTasks.add(task);
         pendingTasks.add(task);
         logger.info("PendingTasks Size {}", pendingTasks.size());
         return task.getTaskContent();
@@ -119,8 +126,8 @@ public class SimpleMesosScheduler extends AMesosScheduler {
 
     @Override
     public Task getTask(Protos.TaskID taskId) {
-        for (Task t : runningTasks) {
-            if (t.getTaskContent().getTaskId().getValue().equals(taskId)) {
+        for (Task t : allTasks) {
+            if (t.getTaskContent().getTaskId().equals(taskId)) {
                 return t;
             }
         }
@@ -146,6 +153,7 @@ public class SimpleMesosScheduler extends AMesosScheduler {
     @Override
     public void onUndefinedFailure(Task failedTask) {
         runningTasks.remove(failedTask);
+        pendingTasks.remove(failedTask);
     }
 
     public List<Task> getPendingTasks() {

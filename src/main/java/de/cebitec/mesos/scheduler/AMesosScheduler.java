@@ -14,8 +14,7 @@ import java.util.List;
 public abstract class AMesosScheduler implements Scheduler {
 
     protected static final Logger logger = LoggerFactory.getLogger(AMesosScheduler.class);
-
-    private Protos.FrameworkID frameworkID;
+    private Thread t;
 
     private SchedulerDriver driver;
 
@@ -27,16 +26,10 @@ public abstract class AMesosScheduler implements Scheduler {
                         .setUser(framework.getUserName())
                         .build(),
                 framework.getMasterIp() + ":" + framework.getMasterPort());
-        driver.start();
-    }
-
-    public void manageResourceOffers(List<Protos.Offer> offers){
-        resourceOffers(driver, offers);
     }
 
     @Override
     public void resourceOffers(SchedulerDriver schedulerDriver, List<Protos.Offer> list) {
-        this.driver = schedulerDriver;
         handleResources(list);
     }
 
@@ -47,7 +40,26 @@ public abstract class AMesosScheduler implements Scheduler {
     }
 
     protected void launchTask(Protos.Offer offer, List<Protos.TaskInfo> infos, Protos.Filters filters){
-        driver.launchTasks(offer.getId(),infos, filters);
+        driver.launchTasks(offer.getId(), infos, filters);
+    }
+
+    public void startDriver(){
+        t = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                driver.run();
+            }
+        });
+        t.start();
+    }
+
+    public void stopDriver(){
+        driver.stop();
+    }
+
+    public void runTask(Task task){
+        addTask(task);
     }
 
     /**
@@ -55,12 +67,11 @@ public abstract class AMesosScheduler implements Scheduler {
      * @param task Task
      * @return
      */
-    public abstract Protos.TaskInfo addTask(Task task);
+    protected abstract Protos.TaskInfo addTask(Task task);
 
     @Override
     public void registered(SchedulerDriver schedulerDriver, Protos.FrameworkID frameworkID, Protos.MasterInfo masterInfo) {
         logger.info("registered() master={}:{}, framework={}", masterInfo.getIp(), masterInfo.getPort(), frameworkID);
-        this.frameworkID = frameworkID;
     }
 
     @Override
@@ -115,7 +126,6 @@ public abstract class AMesosScheduler implements Scheduler {
 
         logger.info("statusUpdate() task {} is in state {}",
                 taskId, actualTask.getStatus());
-
         switch (actualTask.getStatus()) {
             case TASK_RUNNING:
                 logger.info("Task [{}] running ( {} seconds | {} minutes )", actualTask.getTaskContent().getTaskId().getValue(), actualTask.getRuntimeSeconds(), actualTask.getRuntimeMinutes());
@@ -130,11 +140,12 @@ public abstract class AMesosScheduler implements Scheduler {
                 if (actualTask.getExecutionErrors() <= 3) {
                     switch (taskStatus.getReason()) {
                         case REASON_COMMAND_EXECUTOR_FAILED:
-                            actualTask.setExecutionErrors(actualTask.getExecutionErrors() + 1);
                             logger.info("Retrying Task Execution ...");
                             logger.debug("REASON: {}", taskStatus.getReason());
                             break;
                     }
+                    actualTask.setExecutionErrors(actualTask.getExecutionErrors() + 1);
+                    onExecutorFailure(actualTask);
                 } else {
                     logger.warn("Task [{}] gets dequeued in case of a three-timed failed execution.", actualTask.getTaskContent().getTaskId());
                     logger.warn("Task [{}] -> latest Reason [{}]", taskStatus.getReason());
@@ -175,9 +186,5 @@ public abstract class AMesosScheduler implements Scheduler {
     @Override
     public void error(SchedulerDriver schedulerDriver, String s) {
         logger.error("error() {}", s);
-    }
-
-    public Protos.FrameworkID getFramework() {
-        return this.frameworkID;
     }
 }
