@@ -3,6 +3,8 @@ package de.cebitec.mesos.tasks;
 import de.cebitec.mesos.volumes.Volumes;
 import org.apache.mesos.Protos;
 
+import java.util.UUID;
+
 /**
  *
  * @author jsteiner
@@ -10,16 +12,16 @@ import org.apache.mesos.Protos;
  */
 public interface Task<T extends Task> {
 
-    public T createTask(int id,
-                        String dockerImage,
+    public static UUID id = UUID.randomUUID();
+
+    public T createTask(String dockerImage,
                         int maxCPU,
                         int maxMEM,
                         String principal,
                         Volumes volumes,
                         String... arg);
 
-    public T createTask(int id,
-                        String dockerImage,
+    public T createTask(String dockerImage,
                         int maxCPU,
                         int maxMEM,
                         String principal,

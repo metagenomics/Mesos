@@ -73,9 +73,9 @@ public class DockerTask implements Task {
     private int executionErrors = 0;
 
     @Override
-    public Task createTask(int id, String dockerImage, int maxCPU, int maxMEM, String principal, Volumes volumes, String... arg) {
+    public Task createTask(String dockerImage, int maxCPU, int maxMEM, String principal, Volumes volumes, String... arg) {
         Protos.TaskID taskId = Protos.TaskID.newBuilder()
-                .setValue(principal + "_" + Integer.toString(id)).build();
+                .setValue(principal + "_" + id.toString()).build();
 
         /**
          * DockerContainer Builder.
@@ -121,8 +121,8 @@ public class DockerTask implements Task {
     }
 
     @Override
-    public Task createTask(int id, String dockerImage, int maxCPU, int maxMEM, String principal, String... arg) {
-        return this.createTask(id, dockerImage, maxCPU, maxMEM, principal, new Volumes(), arg);
+    public Task createTask(String dockerImage, int maxCPU, int maxMEM, String principal, String... arg) {
+        return this.createTask(dockerImage, maxCPU, maxMEM, principal, new Volumes(), arg);
     }
 
     @Override
