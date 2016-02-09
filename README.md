@@ -47,7 +47,7 @@ and dependency:
 4. Run Maven Tests
 
   ~~~BASH
-  mvn clean compile test
+  sudo mvn clean compile test
   ~~~
 
 ###### Optional: Test Configuration
