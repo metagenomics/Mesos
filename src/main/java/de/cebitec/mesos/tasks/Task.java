@@ -12,8 +12,6 @@ import java.util.UUID;
  */
 public interface Task<T extends Task> {
 
-    public static UUID id = UUID.randomUUID();
-
     public T createTask(String dockerImage,
                         int maxCPU,
                         int maxMEM,

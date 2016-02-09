@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author jsteiner
@@ -75,7 +76,7 @@ public class DockerTask implements Task {
     @Override
     public Task createTask(String dockerImage, int maxCPU, int maxMEM, String principal, Volumes volumes, String... arg) {
         Protos.TaskID taskId = Protos.TaskID.newBuilder()
-                .setValue(principal + "_" + id.toString()).build();
+                .setValue(principal + "_" + UUID.randomUUID().toString()).build();
 
         /**
          * DockerContainer Builder.
