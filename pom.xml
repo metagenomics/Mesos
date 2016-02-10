@@ -2,11 +2,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.bioboxes.bioboxmesossheduler</groupId>
-    <artifactId>BioboxMesos</artifactId>
-    <version>0.9</version>
+    <groupId>com.github.metagenomics</groupId>
+    <artifactId>Mesos</artifactId>
+    <version>0.1.0-alpha</version>
     <packaging>jar</packaging>
-    <name>BioboxMesos</name>
+    <name>Mesos</name>
         
     <properties>
         <github.global.server>github</github.global.server>
