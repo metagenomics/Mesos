@@ -6,28 +6,9 @@
 
 For code examples, please look at our [Test cases](src/test/java/de/cebitec/mesos/scheduler).
 
-### Installation
+### Install Maven dependency
 
-Add jitpack repository:
-
-~~~XML
-<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-</repositories>
-~~~
-
-and dependency:
-
-~~~XML
-<dependency>
-	    <groupId>com.github.metagenomics</groupId>
-	    <artifactId>Mesos</artifactId>
-	    <version>0.1.0-alpha</version>
-</dependency>
-~~~
+Click on the above jitpack button for an installation description of the current Maven Mesos artifact.
 
 ### Run Unit Tests
 
