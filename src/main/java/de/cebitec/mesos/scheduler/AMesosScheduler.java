@@ -1,6 +1,7 @@
 package de.cebitec.mesos.scheduler;
 
 import de.cebitec.mesos.framework.IFramework;
+import de.cebitec.mesos.state.IStateListener;
 import de.cebitec.mesos.tasks.Task;
 import org.apache.mesos.MesosSchedulerDriver;
 import org.apache.mesos.Protos;
@@ -9,7 +10,9 @@ import org.apache.mesos.SchedulerDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class AMesosScheduler implements Scheduler {
 
@@ -17,6 +20,8 @@ public abstract class AMesosScheduler implements Scheduler {
     private Thread t;
 
     private SchedulerDriver driver;
+
+    private List<IStateListener> listenerList = new ArrayList<IStateListener>();
 
     public AMesosScheduler(IFramework framework){
         driver = new MesosSchedulerDriver(this,
@@ -28,12 +33,18 @@ public abstract class AMesosScheduler implements Scheduler {
                 framework.getMasterIp() + ":" + framework.getMasterPort());
     }
 
+    public void addListener(IStateListener stateListener){
+        listenerList.add(stateListener);
+    }
+
     @Override
     public void resourceOffers(SchedulerDriver schedulerDriver, List<Protos.Offer> list) {
         handleResources(list);
     }
 
     protected abstract void handleResources(List<Protos.Offer> list);
+
+
 
     protected void declineOffer(Protos.Offer offer){
         driver.declineOffer(offer.getId());
@@ -129,11 +140,11 @@ public abstract class AMesosScheduler implements Scheduler {
         switch (actualTask.getStatus()) {
             case TASK_RUNNING:
                 logger.info("Task [{}] running ( {} seconds | {} minutes )", actualTask.getTaskContent().getTaskId().getValue(), actualTask.getRuntimeSeconds(), actualTask.getRuntimeMinutes());
-                onRunning(actualTask);
+                updateOnRunning(actualTask);
                 break;
             case TASK_FINISHED:
                 logger.info("Task {} FINISHED (in {} seconds)", actualTask.getTaskContent().getTaskId().getValue(), actualTask.getRuntimeSeconds());
-                onFinished(actualTask);
+                updateOnFinished(actualTask);
                 break;
             default:
                 logger.warn("Task-Problem: Cause = {}", taskStatus.getReason());
@@ -145,14 +156,34 @@ public abstract class AMesosScheduler implements Scheduler {
                             break;
                     }
                     actualTask.setExecutionErrors(actualTask.getExecutionErrors() + 1);
-                    onExecutorFailure(actualTask);
+                    updateOnExecutorFailure(actualTask);
                 } else {
                     logger.warn("Task [{}] gets dequeued in case of a three-timed failed execution.", actualTask.getTaskContent().getTaskId());
                     logger.warn("Task [{}] -> latest Reason [{}]", taskStatus.getReason());
-                    onUndefinedFailure(actualTask);
+                    updateOnUndefinedFailure(actualTask);
                 }
                 break;
         }
+    }
+
+    public void updateOnRunning(Task task){
+        onRunning(task);
+        listenerList.stream().forEach(listener -> listener.onRunning(task));
+    }
+
+    public void updateOnExecutorFailure(Task task){
+        onExecutorFailure(task);
+        listenerList.stream().forEach(listener -> listener.onExecutorFailure(task));
+    }
+
+    public void updateOnFinished(Task task){
+        onFinished(task);
+        listenerList.stream().forEach(listener -> listener.onFinished(task));
+    }
+
+    public void updateOnUndefinedFailure(Task task){
+        onUndefinedFailure(task);
+        listenerList.stream().forEach(listener -> listener.onUndefinedFailure(task));
     }
 
     public abstract void onRunning(Task runningTask);
