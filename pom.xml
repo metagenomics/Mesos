@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.metagenomics</groupId>
     <artifactId>Mesos</artifactId>
-    <version>0.1.0-alpha</version>
+    <version>0.1.0-alpha.1</version>
     <packaging>jar</packaging>
     <name>Mesos</name>
         
