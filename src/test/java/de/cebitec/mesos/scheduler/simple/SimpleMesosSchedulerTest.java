@@ -21,11 +21,12 @@ public class SimpleMesosSchedulerTest {
 
     private SimpleMesosScheduler scheduler;
 
-    private final PropertyStore store;
+    private static PropertyStore store;
 
     private FrameworkDescriptor descriptor;
 
-    public SimpleMesosSchedulerTest() {
+    @BeforeClass
+    public static void initPropertyStore(){
         store = new PropertyStore();
     }
 
@@ -49,15 +50,10 @@ public class SimpleMesosSchedulerTest {
     @Test
     public void canExecuteSimpleTask() {
 
-        Task task1 = new DockerTask();
-        Task task2 = new DockerTask();
-        Task task3 = new DockerTask();
-        Task task4 = new DockerTask();
-
-        task1.createTask("busybox", 2, 2, "root");
-        task2.createTask("busybox", 1, 1, "root");
-        task3.createTask("busybox", 3, 2, "root");
-        task4.createTask("busybox", 1, 4, "root");
+        Task task1 = new DockerTask().createTask("busybox", 2, 2, "root");
+        Task task2 = new DockerTask().createTask("busybox", 1, 1, "root");
+        Task task3 = new DockerTask().createTask("busybox", 3, 2, "root");
+        Task task4 = new DockerTask().createTask("busybox", 1, 4, "root");
 
         scheduler.runTask(task1);
         scheduler.runTask(task2);
