@@ -1,0 +1,6 @@
+machine:
+  java:
+    version: oraclejdk8
+test:
+  override:
+       - sudo mvn clean compile -Dtest=DockerTaskComparatorTest test
