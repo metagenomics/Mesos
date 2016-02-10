@@ -163,6 +163,16 @@ public abstract class AMesosScheduler implements Scheduler {
 
     public abstract void onUndefinedFailure(Task failedTask);
 
+    public abstract List<Task> getPendingTasks();
+
+    public abstract List<Task> getStagingTasks();
+
+    public abstract List<Task> getRunningTasks();
+
+    public abstract List<Task> getFinishedTasks();
+
+    public abstract List<Task> getFailedTasks();
+
     @Override
     public void frameworkMessage(SchedulerDriver schedulerDriver, Protos.ExecutorID executorID, Protos.SlaveID slaveID, byte[] bytes) {
         logger.info("frameworkMessage()");

@@ -156,22 +156,27 @@ public class SimpleMesosScheduler extends AMesosScheduler {
         pendingTasks.remove(failedTask);
     }
 
+    @Override
     public List<Task> getPendingTasks() {
         return pendingTasks;
     }
 
+    @Override
     public List<Task> getStagingTasks() {
         return stagingTasks;
     }
 
+    @Override
     public List<Task> getRunningTasks() {
         return runningTasks;
     }
 
+    @Override
     public List<Task> getFinishedTasks() {
         return finishedTasks;
     }
 
+    @Override
     public List<Task> getFailedTasks() {
         return failedTasks;
     }
