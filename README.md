@@ -1,4 +1,4 @@
-[![Release](https://jitpack.io/v/metagenomics/Mesos.svg)](https://jitpack.io/#metagenomics/Mesos)
+[![Release](https://jitpack.io/v/metagenomics/Mesos.svg)](https://jitpack.io/#metagenomics/Mesos) [![Circle CI](https://circleci.com/gh/metagenomics/Mesos/tree/master.svg?style=svg)](https://circleci.com/gh/metagenomics/Mesos/tree/master)
 
 ## Mesos Scheduler
 
@@ -16,7 +16,7 @@ Add jitpack repository:
 		    <id>jitpack.io</id>
 		    <url>https://jitpack.io</url>
 		</repository>
-	</repositories>
+</repositories>
 ~~~
 
 and dependency:
