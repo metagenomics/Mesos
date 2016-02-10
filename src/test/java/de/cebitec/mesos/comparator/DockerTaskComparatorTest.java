@@ -5,9 +5,6 @@ import de.cebitec.mesos.scheduler.SimpleMesosScheduler;
 import de.cebitec.mesos.tasks.DockerTask;
 import de.cebitec.mesos.tasks.Task;
 import org.apache.mesos.Protos;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import util.PropertyStore;
 
@@ -29,28 +26,6 @@ public class DockerTaskComparatorTest {
     private static PropertyStore store;
 
     private FrameworkDescriptor descriptor;
-
-    @BeforeClass
-    public static void initPropertyStore(){
-        store = new PropertyStore();
-    }
-
-    @Before
-    public void setUp() {
-        descriptor = new FrameworkDescriptor();
-        descriptor.setFrameworkName(store.getProperty("framework.name"));
-        descriptor.setHostname(store.getProperty("master.hostname"));
-        descriptor.setUserName(store.getProperty("master.user"));
-        descriptor.setMasterIp(store.getProperty("master.ip"));
-        descriptor.setMasterPort(store.getProperty("master.port"));
-        scheduler = new SimpleMesosScheduler(descriptor);
-        scheduler.startDriver();
-    }
-
-    @After
-    public void tearDown() {
-        scheduler.stopDriver();
-    }
 
     /**
      * Test of compare method, of class DockerTaskComparator.
