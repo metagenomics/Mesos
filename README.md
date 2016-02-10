@@ -2,7 +2,11 @@
 
 ## Mesos Scheduler
 
-### Install
+### Usage
+
+For code examples, please look at our [Test cases](src/test/java/de/cebitec/mesos/scheduler).
+
+### Installation
 
 Add jitpack repository:
 
